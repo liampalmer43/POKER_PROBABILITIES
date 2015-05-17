@@ -1,5 +1,6 @@
 #include<iostream>
 #include<vector>
+#include<sstream>
 #include "Card.h"
 #include "probability.h"
 using namespace std;
@@ -222,22 +223,92 @@ string Hand(const vector<Card*>& hand){
 	return "Hi " + HiCard(sorter);	
 }
 
-vector< vector<Card*> > Subsets(const vector<Card*>& sevens, vector< vector<Card*> >& subsets){
+bool FiveOnes(int i){
+	int numones = 0;
+	while(i != 0){
+		if(i % 2 == 1){
+			numones++;
+			i--;
+		}
+		i = i / 2;
+	}
+	return numones == 5;
 }
 
-int* Probability(const vector<Card*>& hands, const vector<Card*>& flipped){
-	int deck[52];
+void Subsets(const vector<Card*>& sevens, vector< vector<Card*> >& subsets){
+	for(int i = 1; i < 256; i++){
+		int placer = 0;
+		if(FiveOnes(i)){
+			vector<Card*> ex;
+			while(i != 0){
+				if(i % 2 == 1){
+					ex.push_back(sevens[placer]);
+					i--;
+				}
+				placer++;
+				i = i / 2;
+			}
+			subsets.push_back(ex);
+		}
+	}
+}
+
+int Probability(const vector<Card*>& hands, const vector<Card*>& flipped){
+	vector<int> players;
+	int winner;
+	int min = 15;	
+
+	string a[9] = {"RoyalFlush", "StraightFlush", "4Kind", "FullHouse", "Flush", "Straight", "3Kind", "2Pair", "Pair"};
+	int b[10];
+	for(int i = 0; i < 10; ++i){
+		b[i] = 0;
+	}
+	
 	if(flipped.size() == 5){
 		for(int i = 0; i < hands.size(); ++i){
 			vector<Card*> sevens = flipped;
 			sevens.push_back(hands[i]);
 			sevens.push_back(hands[i+1]);
 			vector< vector<Card*> > subsets;
-			subsets = Subsets(sevens, subsets);
-
-			i = i + 2;
-
-	return 0;
+			Subsets(sevens, subsets);
+			for(int j = 0; j < subsets.size(); ++j){
+				string result = Hand(subsets[j]);
+				istringstream ss(result);
+				string temp;
+				ss >> temp;
+				for(int k = 0; k < 9; ++k){
+					if(temp == a[k]){
+						b[k]++;
+						break;
+					}
+					if(temp == "Hi"){
+						int n;
+						ss >> n;
+						if(n > b[9]){
+							b[9] = n;
+						}
+					}
+				}
+				for(int k1 = 0; k1 < 10; ++k1){
+					if(b[k1] != 0){
+						players.push_back(k1);
+						break;
+					}
+				}
+				for(int k2 = 0; k2 < 10; ++k2){
+					b[k2] = 0;
+				}
+			}
+			i++;
+		}
+		for(int i = 0; i < players.size(); ++i){
+			if(b[i] < min){
+				min = b[i];
+				winner = i;
+			}
+		}	
+	}
+	return winner;
 }
 
 

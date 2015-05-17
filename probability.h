@@ -14,6 +14,8 @@ std::string TwoPair(const std::vector<Card*>& hand);
 int Pair(const std::vector<Card*>& hand);
 std::string HiCard(const std::vector<Card*> hand);
 std::string Hand(const std::vector<Card*>& hand);
-int* Probability(const std::vector<Card*>& hands, const std::vector<Card*>& flipped);
+bool FiveOnes(int i);
+void Subsets(const std::vector<Card*>& sevens, std::vector< std::vector<Card*> >& subsets);
+int Probability(const std::vector<Card*>& hands, const std::vector<Card*>& flipped);
 
 #endif

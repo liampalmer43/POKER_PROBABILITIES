@@ -125,5 +125,10 @@ int main(){
 	for(int i = 0; i < 5; ++i){
 		delete test9[i];
 	}
+
+	cout << FiveOnes(63) << endl;
+	cout << FiveOnes(31) << endl;
+	cout << FiveOnes(62) << endl;
+	cout << FiveOnes(10) << endl;
 	return 0;
 }	
