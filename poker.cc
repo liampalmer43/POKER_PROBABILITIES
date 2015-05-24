@@ -189,6 +189,7 @@ int main(){
 			cout << "Player2 (computer): " << *deck[s1] << *deck[s2] << endl;
 		}
 	}
+	//delete cards of the deck
 	for(int j = 0; j < deck.size(); ++j){
 		delete deck[j];
 	}
