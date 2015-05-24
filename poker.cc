@@ -1,11 +1,29 @@
 #include<iostream>
 #include<string>
 #include<vector>
+#include<cstdlib>
+#include<time.h>
 #include "Card.h"
 #include "probability.h"
 using namespace std;
 
+vector<Card*> deck;
+int recorder[104];
+
+int getRandom(){                                //getRandom randomly selects a card fromt the deck
+	int v1;
+		while(true){
+			v1 = rand() % 104;
+			if(recorder[v1] == 0){          //checks if card is already in use
+				recorder[v1] = 1;       
+				break;
+			}       
+		}       
+		return v1;
+}
+
 int main(){
+/*
 	vector<Card*> test;
 	test.push_back(new Card("Spade", 9));
 	test.push_back(new Card("Diamond", 10));
@@ -130,5 +148,49 @@ int main(){
 	cout << FiveOnes(31) << endl;
 	cout << FiveOnes(62) << endl;
 	cout << FiveOnes(10) << endl;
+	
+	vector<Card*> t1k;
+	t1k.push_back(new Card("Diamond", 8));
+	t1k.push_back(new Card("Spade", 8));
+	t1k.push_back(new Card("Heart", 3));
+	t1k.push_back(new Card("Heart", 4));
+	vector<Card*> t11;
+	t11.push_back(new Card("Heart", 2));
+	t11.push_back(new Card("Heart", 10));
+	t11.push_back(new Card("Spade", 4));
+	t11.push_back(new Card("Heart", 8));
+	t11.push_back(new Card("Club", 1));
+	Probability(t1k, t11);
+*/
+	srand (time(NULL));
+	for(int j = 0; j < 104; j++){
+		recorder[j] = 0;
+	}
+	string suits[4] = {"HEART","DIAMOND","CLUB","SPAID"};
+	int Number = 1;
+	int Suit = 0;
+	for(int i = 0; i < 104; i++){
+		deck.push_back(new Card(suits[Suit], Number));
+		Number++;
+		Suit++;
+		if(Number == 14){ Number = 1; }
+		if(Suit == 4){ Suit = 0; }
+	}
+	cout << "Let's play some poker!" << endl;
+	string s;
+	int f1, f2, s1, s2;
+	while(cin >> s){
+		if(s == "deal"){
+			f1 = getRandom();
+			f2 = getRandom();
+			s1 = getRandom();
+			s2 = getRandom();
+			cout << "Player1 (you): " << *deck[f1] << *deck[f2] << endl;
+			cout << "Player2 (computer): " << *deck[s1] << *deck[s2] << endl;
+		}
+	}
+	for(int j = 0; j < deck.size(); ++j){
+		delete deck[j];
+	}
 	return 0;
-}	
+}

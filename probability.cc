@@ -185,41 +185,51 @@ string Hand(const vector<Card*>& hand){
 	}
 	string a[9] = {"RoyalFlush", "StraightFlush", "4Kind", "FullHouse", "Flush", "Straight", "3Kind", "2Pair", "Pair"}; 
 	vector<Card*> sorter = sort(hand);
-	cout << *sorter[0] << *(sorter[1]) << *(sorter[2]) << *(sorter[3]) << *(sorter[4]) << endl; 
+	//cout << *sorter[0] << *(sorter[1]) << *(sorter[2]) << *(sorter[3]) << *(sorter[4]) << endl; 
 	string flush = CheckFlush(sorter);
 	int straight = CheckStraight(sorter);
 	if(flush != "nothing" && straight == 10){
+		//cout << a[0] << endl;
 		return a[0] + " " + flush + " " + to_string(straight);
 	}
 	if(flush != "nothing" && straight != 0){
+		//cout << a[1] << endl;
 		return a[1] + " " + flush + " " + to_string(straight);
 	}
 	int fourkind = FourKind(sorter);
 	if(fourkind != 0){
+		//cout << a[2] << endl;
 		return a[2] + " " + to_string(fourkind);
 	}
 	string fullhouse = FullHouse(sorter);
 	if(fullhouse != "nothing"){
+		//cout << a[3] << endl;
 		return a[3] + " " + fullhouse;
 	}
 	if(flush != "nothing"){
+		//cout << a[4] << endl;
 		return a[4] + " " + flush;
 	}
 	if(straight != 0){
+		//cout << a[5] << endl;
 		return a[5] + " " + to_string(straight);
 	}
 	int threekind = ThreeKind(sorter);
 	if(threekind != 0){
+		//cout << a[6] << endl;
 		return a[6] + " " + to_string(threekind);
 	}
 	string twopair = TwoPair(sorter);
 	if(twopair != "nothing"){
+		//cout << a[7] << endl;
 		return a[7] + " " + twopair;
 	}
 	int pair = Pair(sorter);
 	if(pair	!= 0){
+		//cout << a[8] << endl;
 		return a[8] + " " + to_string(pair);
 	}
+	//cout << "Hi " + HiCard(sorter);
 	return "Hi " + HiCard(sorter);	
 }
 
@@ -236,21 +246,35 @@ bool FiveOnes(int i){
 }
 
 void Subsets(const vector<Card*>& sevens, vector< vector<Card*> >& subsets){
-	for(int i = 1; i < 256; i++){
+	for(int i = 1; i < 125; ++i){
 		int placer = 0;
 		if(FiveOnes(i)){
+			//cout << "here is i in subsets " << i << endl;
 			vector<Card*> ex;
-			while(i != 0){
-				if(i % 2 == 1){
+			int k = i;
+			while(k != 0){
+				if(k % 2 == 1){
 					ex.push_back(sevens[placer]);
-					i--;
+					k--;
 				}
 				placer++;
-				i = i / 2;
+				k = k / 2;
 			}
 			subsets.push_back(ex);
 		}
 	}
+}
+
+void Print(const vector< vector<Card*> >& subsets){
+	//cout << "Size of subsets vector: " << subsets.size() << endl;
+	for(int i = 0; i < subsets.size(); ++i){
+		//cout << "Size of subset vector: " << subsets[i].size() << endl;
+		for(int j = 0; j < subsets[i].size(); ++j){
+			cout << *subsets[i][j] << " ";
+		}
+		cout << endl;
+	}
+	//cout << "end of print" << endl;
 }
 
 int Probability(const vector<Card*>& hands, const vector<Card*>& flipped){
@@ -265,12 +289,17 @@ int Probability(const vector<Card*>& hands, const vector<Card*>& flipped){
 	}
 	
 	if(flipped.size() == 5){
+		cout << "We have a five flop" << endl;
 		for(int i = 0; i < hands.size(); ++i){
 			vector<Card*> sevens = flipped;
+			cout << "Player: " << *hands[i] << *hands[i+1] << endl;
 			sevens.push_back(hands[i]);
 			sevens.push_back(hands[i+1]);
 			vector< vector<Card*> > subsets;
 			Subsets(sevens, subsets);
+			//cout << "Just past sevens" << endl;
+			//Print(subsets);
+			//cout << "Just past subsets" << endl;
 			for(int j = 0; j < subsets.size(); ++j){
 				string result = Hand(subsets[j]);
 				istringstream ss(result);
@@ -281,33 +310,36 @@ int Probability(const vector<Card*>& hands, const vector<Card*>& flipped){
 						b[k]++;
 						break;
 					}
-					if(temp == "Hi"){
-						int n;
-						ss >> n;
-						if(n > b[9]){
-							b[9] = n;
-						}
-					}
 				}
-				for(int k1 = 0; k1 < 10; ++k1){
-					if(b[k1] != 0){
-						players.push_back(k1);
-						break;
+				if(temp == "Hi"){
+					int n;
+					ss >> n;
+					if(n > b[9]){
+						b[9] = n;
 					}
-				}
-				for(int k2 = 0; k2 < 10; ++k2){
-					b[k2] = 0;
 				}
 			}
-			i++;
+			for(int k1 = 0; k1 < 10; ++k1){
+				if(b[k1] != 0){
+					players.push_back(k1);
+					break;
+				}
+			}
+			for(int k2 = 0; k2 < 10; ++k2){
+				b[k2] = 0;
+			}
+			++i;
 		}
 		for(int i = 0; i < players.size(); ++i){
+			cout << "Hand: " << a[players[i]] << endl;
 			if(b[i] < min){
 				min = b[i];
 				winner = i;
 			}
-		}	
+		}
+			
 	}
+	cout << "Winner is: " << winner << endl;
 	return winner;
 }
 
